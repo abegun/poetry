@@ -15,6 +15,8 @@ from cachecontrol.caches.file_cache import FileCache
 from cachecontrol.controller import logger as cache_control_logger
 from cachy import CacheManager
 from html5lib.html5parser import parse
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 from poetry.core.packages import Dependency
 from poetry.core.packages import Package
@@ -70,8 +72,11 @@ class PyPiRepository(RemoteRepository):
         )
 
         self._cache_control_cache = FileCache(str(release_cache_dir / "_http"))
+        inner_session = requests.Session()
+        retries = Retry(total=5, backoff_factor=1, status_forcelist=[ 502, 503, 504 ])
+        inner_session.mount(self._base_url, HTTPAdapter(max_retries=retries))
         self._session = CacheControl(
-            requests.session(), cache=self._cache_control_cache
+            inner_session, cache=self._cache_control_cache
         )
 
         self._name = "PyPI"

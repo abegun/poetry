@@ -793,14 +793,14 @@ class Provider:
     @contextmanager
     def progress(self) -> Iterator[None]:
         if not self._io.output.is_decorated() or self.is_debugging():
-            self._io.write_line("Resolving dependencies...")
+            self._io.write_line("Resolving dependencies...AndrewFork")
             yield
         else:
             indicator = Indicator(self._io, "{message} <debug>({elapsed:2s})</debug>")
 
             with indicator.auto(
-                "<info>Resolving dependencies...</info>",
-                "<info>Resolving dependencies...</info>",
+                "<info>Resolving dependencies...AndrewFork</info>",
+                "<info>Resolving dependencies...AndrewFork</info>",
             ):
                 yield
 
